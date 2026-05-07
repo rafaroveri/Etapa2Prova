@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilo.css">
+    <title>Primeira entrega</title>
+</head>
+<body>
+    <header>
+        <h1>Cadastre sua tarefa</h1>
+    </header>
+    <main>
+        <form class="formulario">
+            <label for="tarefa" id="labelTarefa">Tarefa:</label>
+            <input type="text" id="tarefa" name="tarefa" required>
+            <input type="button" value="Adicionar" class="botao" onclick="inserirTarefa()">
+        </form>
+
+        <ul id="listaTarefas"></ul>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>

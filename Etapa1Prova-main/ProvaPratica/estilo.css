@@ -1,0 +1,133 @@
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: xx-large;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+#labelTarefa{
+    font-size: large;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.botao{
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#tarefa {
+    padding: 8px 12px;
+    font-size: medium;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+#listaTarefas {
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 500px;
+    width: 100%;
+}
+
+.tarefa {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.nome-tarefa {
+    flex: 1;
+    cursor: pointer;
+    font-size: medium;
+    word-break: break-word;
+}
+
+.nome-tarefa.concluida {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.btn-remover {
+    padding: 5px 12px;
+    background-color: #e53935;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: small;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-remover:hover {
+    background-color: #b71c1c;
+}
+
+.botao:hover {
+    background-color: #388E3C;
+}
+
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: x-large;
+    }
+
+    .formulario {
+        width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+
+    #tarefa {
+        max-width: 100%;
+    }
+
+    #listaTarefas {
+        margin: 16px 10px;
+    }
+
+    .tarefa {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
