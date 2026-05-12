@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API de Endereços</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+          --bg: #0f0f11;
+          --surface: #18181c;
+          --surface2: #222228;
+          --border: #2e2e38;
+          --accent: #7c6aff;
+          --accent-dim: #7c6aff22;
+          --accent-hover: #9d8fff;
+          --text: #e8e8f0;
+          --muted: #7a7a90;
+          --success: #4ade80;
+          --error: #f87171;
+          --warning: #fbbf24;
+          --mono: 'DM Mono', monospace;
+          --sans: 'DM Sans', sans-serif;
+        }
+
+        body {
+          background: var(--bg);
+          color: var(--text);
+          font-family: var(--sans);
+          min-height: 100vh;
+          display: grid;
+          grid-template-columns: 380px 1fr;
+          grid-template-rows: 56px 1fr;
+        }
+
+        header {
+          grid-column: 1 / -1;
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          padding: 0 28px;
+          gap: 12px;
+        }
+        .logo-dot {
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          background: var(--accent);
+          box-shadow: 0 0 10px var(--accent);
+        }
+        header h1 {
+          font-family: var(--mono);
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--text);
+          letter-spacing: .04em;
+        }
+        .badge {
+          margin-left: auto;
+          font-family: var(--mono);
+          font-size: 11px;
+          color: var(--muted);
+          background: var(--surface2);
+          border: 1px solid var(--border);
+          padding: 2px 10px;
+          border-radius: 20px;
+        }
+
+        aside {
+          background: var(--surface);
+          border-right: 1px solid var(--border);
+          padding: 24px 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 28px;
+          overflow-y: auto;
+        }
+
+        .section-label {
+          font-family: var(--mono);
+          font-size: 10px;
+          letter-spacing: .12em;
+          color: var(--muted);
+          text-transform: uppercase;
+          margin-bottom: 10px;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 6px; }
+        label {
+          font-size: 12px;
+          color: var(--muted);
+          font-family: var(--mono);
+          letter-spacing: .04em;
+        }
+        input {
+          background: var(--surface2);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 9px 12px;
+          color: var(--text);
+          font-family: var(--mono);
+          font-size: 13px;
+          outline: none;
+          transition: border-color .15s;
+        }
+        input:focus { border-color: var(--accent); }
+        input::placeholder { color: var(--border); }
+
+        .actions { display: flex; flex-direction: column; gap: 8px; }
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--surface2);
+          color: var(--text);
+          font-family: var(--mono);
+          font-size: 12px;
+          cursor: pointer;
+          transition: all .15s;
+          text-align: left;
+        }
+        button:hover { border-color: var(--accent); background: var(--accent-dim); color: var(--accent-hover); }
+        button:active { transform: scale(.98); }
+
+        .method-pill {
+          font-size: 10px;
+          font-weight: 500;
+          padding: 2px 7px;
+          border-radius: 4px;
+          min-width: 46px;
+          text-align: center;
+          letter-spacing: .04em;
+        }
+        .get  { background: #0d3d26; color: #4ade80; }
+        .post { background: #1a2d4a; color: #60a5fa; }
+        .del  { background: #3d1414; color: #f87171; }
+
+        main {
+          padding: 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          overflow-y: auto;
+        }
+
+        .status-bar {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 16px;
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--surface);
+          font-family: var(--mono);
+          font-size: 12px;
+          color: var(--muted);
+          min-height: 42px;
+          transition: all .2s;
+        }
+        .status-bar.ok    { border-color: var(--success); color: var(--success); background: #0d2b1a; }
+        .status-bar.error { border-color: var(--error);   color: var(--error);   background: #2b0d0d; }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+        .response-panel {
+          flex: 1;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .panel-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          border-bottom: 1px solid var(--border);
+        }
+        .panel-title {
+          font-family: var(--mono);
+          font-size: 11px;
+          color: var(--muted);
+          letter-spacing: .08em;
+          text-transform: uppercase;
+        }
+        .clear-btn {
+          font-family: var(--mono);
+          font-size: 10px;
+          color: var(--muted);
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 2px 8px;
+          border-radius: 4px;
+          transition: color .15s;
+          min-width: unset;
+        }
+        .clear-btn:hover { color: var(--text); background: var(--surface2); border: none; }
+
+        #output {
+          padding: 20px;
+          font-family: var(--mono);
+          font-size: 13px;
+          line-height: 1.7;
+          color: var(--muted);
+          white-space: pre-wrap;
+          overflow-y: auto;
+          flex: 1;
+          min-height: 300px;
+        }
+
+        .address-grid { display: flex; flex-direction: column; gap: 10px; }
+        .address-card {
+          background: var(--surface2);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 14px 16px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 6px 20px;
+          animation: fadeIn .2s ease;
+        }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+        .card-cep {
+          grid-column: 1 / -1;
+          font-family: var(--mono);
+          font-size: 13px;
+          color: var(--accent-hover);
+          font-weight: 500;
+          margin-bottom: 4px;
+        }
+        .card-field { font-size: 12px; color: var(--muted); }
+        .card-value { font-size: 12px; color: var(--text); }
+
+        .empty-state {
+          color: var(--muted);
+          font-size: 13px;
+          font-family: var(--mono);
+          padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-dot"></div>
+    <h1>address-api / localhost:8080</h1>
+    <span class="badge">Spring Boot</span>
+</header>
+
+<aside>
+    <div>
+        <p class="section-label">Dados</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="field">
+                <label>cep</label>
+                <input type="text" id="cep" placeholder="38400100">
+            </div>
+            <div class="field">
+                <label>rua</label>
+                <input type="text" id="rua" placeholder="Floriano Peixoto">
+            </div>
+            <div class="field">
+                <label>bairro</label>
+                <input type="text" id="bairro" placeholder="Centro">
+            </div>
+            <div class="field">
+                <label>cidade</label>
+                <input type="text" id="cidade" placeholder="Uberlândia">
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <p class="section-label">Ações</p>
+        <div class="actions">
+            <button onclick="buscar()">
+                <span class="method-pill get">GET</span>
+                Buscar pelo CEP
+            </button>
+            <button onclick="listar()">
+                <span class="method-pill get">GET</span>
+                Listar todos
+            </button>
+            <button onclick="criar()">
+                <span class="method-pill post">POST</span>
+                Criar endereço
+            </button>
+            <button onclick="apagar()">
+                <span class="method-pill del">DEL</span>
+                Apagar pelo CEP
+            </button>
+        </div>
+    </div>
+</aside>
+
+<main>
+    <div class="status-bar" id="status">
+        <span class="status-dot"></span>
+        <span id="status-text">Aguardando requisição...</span>
+    </div>
+
+    <div class="response-panel">
+        <div class="panel-header">
+            <span class="panel-title">Resposta</span>
+            <button class="clear-btn" onclick="limpar()">limpar</button>
+        </div>
+        <div id="output"><span class="empty-state">Nenhuma resposta ainda.</span></div>
+    </div>
+</main>
+
+<script>
+    const BASE = 'http://localhost:8080';
+
+    function setStatus(msg, tipo) {
+      const bar = document.getElementById('status');
+      const txt = document.getElementById('status-text');
+      bar.className = 'status-bar ' + (tipo || '');
+      txt.textContent = msg;
+    }
+
+    function renderAddresses(data) {
+      if (!data.length) return '<span class="empty-state">Nenhum endereço cadastrado.</span>';
+      return '<div class="address-grid">' + data.map(a => `
+        <div class="address-card">
+          <div class="card-cep">${a.cep}</div>
+          <div class="card-field">Rua</div>   <div class="card-value">${a.rua}</div>
+          <div class="card-field">Bairro</div><div class="card-value">${a.bairro}</div>
+          <div class="card-field">Cidade</div><div class="card-value">${a.cidade}</div>
+        </div>`).join('') + '</div>';
+    }
+
+    async function buscar() {
+      const cep = document.getElementById('cep').value.trim();
+      if (!cep) { setStatus('Informe um CEP.', 'error'); return; }
+      setStatus('GET /address/' + cep, '');
+      try {
+        const res = await fetch(`${BASE}/address/${cep}`);
+        if (!res.ok) { setStatus('404 — CEP não encontrado.', 'error'); document.getElementById('output').innerHTML = '<span class="empty-state">Nenhum endereço com esse CEP.</span>'; return; }
+        const a = await res.json();
+        document.getElementById('rua').value    = a.rua;
+        document.getElementById('bairro').value = a.bairro;
+        document.getElementById('cidade').value = a.cidade;
+        setStatus('200 OK — endereço encontrado.', 'ok');
+        document.getElementById('output').innerHTML = renderAddresses([a]);
+      } catch { setStatus('Erro de conexão. O servidor está rodando?', 'error'); }
+    }
+
+    async function listar() {
+      setStatus('GET /address', '');
+      try {
+        const res  = await fetch(`${BASE}/address`);
+        const data = await res.json();
+        setStatus(`200 OK — ${data.length} endereço(s) encontrado(s).`, 'ok');
+        document.getElementById('output').innerHTML = renderAddresses(data);
+      } catch { setStatus('Erro de conexão. O servidor está rodando?', 'error'); }
+    }
+
+    async function criar() {
+      const body = {
+        cep:    document.getElementById('cep').value.trim(),
+        rua:    document.getElementById('rua').value.trim(),
+        bairro: document.getElementById('bairro').value.trim(),
+        cidade: document.getElementById('cidade').value.trim()
+      };
+      if (!body.cep) { setStatus('Informe ao menos o CEP.', 'error'); return; }
+      setStatus('POST /address', '');
+      try {
+        await fetch(`${BASE}/address`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        setStatus('201 — Endereço criado com sucesso.', 'ok');
+        document.getElementById('output').innerHTML = renderAddresses([body]);
+      } catch { setStatus('Erro de conexão. O servidor está rodando?', 'error'); }
+    }
+
+    async function apagar() {
+      const cep = document.getElementById('cep').value.trim();
+      if (!cep) { setStatus('Informe um CEP para apagar.', 'error'); return; }
+      setStatus('DELETE /address/' + cep, '');
+      try {
+        const res = await fetch(`${BASE}/address/${cep}`, { method: 'DELETE' });
+        if (res.ok) {
+          setStatus('200 OK — Endereço removido.', 'ok');
+          document.getElementById('output').innerHTML = '<span class="empty-state">Endereço removido com sucesso.</span>';
+        } else {
+          setStatus('404 — CEP não encontrado.', 'error');
+          document.getElementById('output').innerHTML = '<span class="empty-state">Nenhum endereço com esse CEP.</span>';
+        }
+      } catch { setStatus('Erro de conexão. O servidor está rodando?', 'error'); }
+    }
+
+    function limpar() {
+      document.getElementById('output').innerHTML = '<span class="empty-state">Nenhuma resposta ainda.</span>';
+      setStatus('Aguardando requisição...', '');
+    }
+</script>
+</body>
+</html>
